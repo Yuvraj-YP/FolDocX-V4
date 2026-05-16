@@ -1,719 +1,663 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>FolDocX V4 | Intelligent Documentation</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root{
-            --bg:#030712;
-            --bg2:#0f172a;
-            --accent:#10b981;
-            --accent2:#34d399;
-            --glass:rgba(255,255,255,0.05);
-            --text:#f8fafc;
-            --muted:#94a3b8;
-            --border:rgba(16,185,129,0.15);
-        }
+<title>FolDocX V4</title>
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
+<style>
 
-        html{
-            scroll-behavior:smooth;
-        }
+:root{
+    --bg:#020617;
+    --card:rgba(255,255,255,0.05);
+    --border:rgba(16,185,129,0.15);
+    --accent:#10b981;
+    --accent2:#34d399;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+}
 
-        body{
-            font-family:'Segoe UI',sans-serif;
-            background:
-                radial-gradient(circle at top left,#064e3b22 0%,transparent 25%),
-                radial-gradient(circle at bottom right,#10b98111 0%,transparent 30%),
-                var(--bg);
-            color:var(--text);
-            overflow-x:hidden;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        body::before{
-            content:"";
-            position:fixed;
-            width:200%;
-            height:200%;
-            top:-50%;
-            left:-50%;
-            background:
-                linear-gradient(
-                    45deg,
-                    transparent 30%,
-                    rgba(16,185,129,0.03) 50%,
-                    transparent 70%
-                );
-            animation:bgMove 18s linear infinite;
-            pointer-events:none;
-            z-index:-1;
-        }
+html{
+    scroll-behavior:smooth;
+}
 
-        @keyframes bgMove{
-            0%{ transform:rotate(0deg); }
-            100%{ transform:rotate(360deg); }
-        }
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:
+        radial-gradient(circle at top left,#064e3b22 0%,transparent 30%),
+        radial-gradient(circle at bottom right,#10b98111 0%,transparent 35%),
+        var(--bg);
 
-        .page-view{
-            min-height:100vh;
-            display:none;
-            align-items:center;
-            justify-content:center;
-            padding:2rem;
-            animation:fadeSlide .8s ease;
-        }
+    color:var(--text);
+    overflow-x:hidden;
+    min-height:100vh;
+}
 
-        .active{
-            display:flex;
-        }
+/* =========================
+   FLOATING STARS
+========================= */
 
-        @keyframes fadeSlide{
-            from{
-                opacity:0;
-                transform:translateY(25px);
-            }
-            to{
-                opacity:1;
-                transform:translateY(0);
-            }
-        }
+.stars{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:-2;
+    pointer-events:none;
+}
 
-        #heroView{
-            background:
-                radial-gradient(circle at center,#064e3b 0%,var(--bg) 70%);
-        }
+.star{
+    position:absolute;
+    bottom:-100px;
+    border-radius:50%;
+    background:white;
+    opacity:.8;
+    animation:floatStar linear infinite;
+    box-shadow:
+        0 0 10px rgba(255,255,255,.8),
+        0 0 20px rgba(16,185,129,.6);
+}
 
-        .hero-card{
-            max-width:1000px;
-            text-align:center;
-        }
+.star.small{
+    width:2px;
+    height:2px;
+}
 
-        h1{
-            font-size:5rem;
-            letter-spacing:-3px;
-            color:var(--accent);
-            margin-bottom:.5rem;
-            text-shadow:0 0 25px rgba(16,185,129,.3);
-        }
+.star.medium{
+    width:4px;
+    height:4px;
+}
 
-        .tagline{
-            font-size:1.35rem;
-            opacity:.75;
-            margin-bottom:3rem;
-        }
+.star.big{
+    width:6px;
+    height:6px;
+}
 
-        .feature-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-            gap:1.5rem;
-            margin-bottom:3rem;
-        }
+@keyframes floatStar{
 
-        .f-item{
-            background:var(--glass);
-            backdrop-filter:blur(15px);
-            border:1px solid var(--border);
-            padding:1.8rem;
-            border-radius:22px;
-            transition:.4s;
-            position:relative;
-            overflow:hidden;
-        }
+    0%{
+        transform:translateY(0px) translateX(0px);
+        opacity:0;
+    }
 
-        .f-item::before{
-            content:"";
-            position:absolute;
-            width:120px;
-            height:120px;
-            background:rgba(16,185,129,.08);
-            border-radius:50%;
-            top:-50px;
-            right:-50px;
-            transition:.4s;
-        }
+    10%{
+        opacity:1;
+    }
 
-        .f-item:hover{
-            transform:translateY(-8px) scale(1.02);
-            border-color:rgba(16,185,129,.4);
-            box-shadow:0 10px 30px rgba(16,185,129,.12);
-        }
+    100%{
+        transform:translateY(-120vh) translateX(120px);
+        opacity:0;
+    }
+}
 
-        .f-item:hover::before{
-            transform:scale(1.3);
-        }
+/* =========================
+   MAIN VIEW
+========================= */
 
-        .glass-card{
-            width:100%;
-            max-width:700px;
-            background:var(--glass);
-            backdrop-filter:blur(18px);
-            border:1px solid var(--border);
-            border-radius:32px;
-            padding:3rem;
-            position:relative;
-            overflow:hidden;
-            box-shadow:0 20px 60px rgba(0,0,0,.35);
-        }
+.page{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+}
 
-        .glass-card::after{
-            content:"";
-            position:absolute;
-            inset:0;
-            background:linear-gradient(
-                145deg,
-                rgba(255,255,255,.03),
-                transparent 40%
-            );
-            pointer-events:none;
-        }
+.card{
+    width:100%;
+    max-width:760px;
 
-        h2{
-            color:var(--accent);
-            font-size:2rem;
-            margin-bottom:1rem;
-        }
+    background:var(--card);
+    backdrop-filter:blur(18px);
 
-        p{
-            color:var(--muted);
-            line-height:1.7;
-        }
+    border:1px solid var(--border);
 
-        .btn{
-            padding:1rem 2.6rem;
-            border:none;
-            border-radius:999px;
-            cursor:pointer;
-            font-weight:800;
-            transition:.35s;
-            text-decoration:none;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:.6rem;
-            font-size:1rem;
-        }
+    border-radius:32px;
 
-        .btn-primary{
-            background:linear-gradient(135deg,var(--accent),var(--accent2));
-            color:#02120c;
-            box-shadow:0 0 30px rgba(16,185,129,.2);
-        }
+    padding:3rem;
 
-        .btn-primary:hover{
-            transform:translateY(-3px) scale(1.03);
-            box-shadow:0 0 40px rgba(16,185,129,.4);
-        }
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.4),
+        0 0 40px rgba(16,185,129,.08);
 
-        .btn-secondary{
-            background:transparent;
-            color:white;
-            border:1px solid rgba(255,255,255,.1);
-        }
+    animation:fadeIn .8s ease;
+}
 
-        .btn-secondary:hover{
-            background:rgba(255,255,255,.05);
-        }
+@keyframes fadeIn{
 
-        .btn-disabled{
-            width:100%;
-            background:#334155;
-            color:#94a3b8;
-            cursor:not-allowed;
-        }
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
 
-        .btn-active{
-            width:100%;
-            background:linear-gradient(135deg,var(--accent),var(--accent2));
-            color:#02120c;
-            cursor:pointer;
-        }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
 
-        .checklist{
-            margin:2rem 0;
-        }
+.badge{
+    display:inline-block;
 
-        .check-item{
-            display:flex;
-            align-items:center;
-            background:rgba(255,255,255,.03);
-            padding:14px;
-            border-radius:14px;
-            margin-bottom:12px;
-            transition:.3s;
-            border:1px solid transparent;
-            cursor:pointer;
-        }
+    padding:.5rem 1rem;
 
-        .check-item:hover{
-            transform:translateX(5px);
-            border-color:rgba(16,185,129,.25);
-        }
+    border-radius:999px;
 
-        input[type="checkbox"]{
-            width:22px;
-            height:22px;
-            margin-right:15px;
-            accent-color:var(--accent);
-        }
+    background:rgba(16,185,129,.12);
 
-        .terminal{
-            margin-top:1.5rem;
-            background:#020617;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:18px;
-            padding:1.2rem;
-            font-family:Consolas, monospace;
-            color:#22c55e;
-            position:relative;
-            overflow:hidden;
-        }
+    border:1px solid rgba(16,185,129,.2);
 
-        .terminal::before{
-            content:"";
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            height:35px;
-            background:#0f172a;
-            border-bottom:1px solid rgba(255,255,255,.05);
-        }
+    color:var(--accent2);
 
-        .terminal-dots{
-            position:absolute;
-            top:12px;
-            left:14px;
-            display:flex;
-            gap:6px;
-        }
+    font-size:.8rem;
+    font-weight:700;
 
-        .dot{
-            width:10px;
-            height:10px;
-            border-radius:50%;
-        }
+    margin-bottom:1.5rem;
+}
 
-        .red{ background:#ef4444; }
-        .yellow{ background:#facc15; }
-        .green{ background:#22c55e; }
+h1{
+    font-size:4rem;
+    color:var(--accent);
+    letter-spacing:-3px;
 
-        .terminal-content{
-            margin-top:2rem;
-            line-height:1.8;
-        }
+    margin-bottom:.5rem;
 
-        .pulse{
-            animation:pulse 1.6s infinite;
-        }
+    text-shadow:0 0 25px rgba(16,185,129,.25);
+}
 
-        @keyframes pulse{
-            0%{ opacity:1; }
-            50%{ opacity:.35; }
-            100%{ opacity:1; }
-        }
+.tagline{
+    color:var(--muted);
+    font-size:1.2rem;
+    margin-bottom:2.5rem;
+    line-height:1.7;
+}
 
-        .nav-buttons{
-            display:flex;
-            gap:1rem;
-            margin-top:2rem;
-            flex-wrap:wrap;
-        }
+/* =========================
+   FEATURE GRID
+========================= */
 
-        .small-note{
-            margin-top:2rem;
-            opacity:.35;
-            font-size:.75rem;
-            letter-spacing:4px;
-            text-align:center;
-        }
+.grid{
+    display:grid;
 
-        .status-badge{
-            display:inline-block;
-            padding:.45rem .9rem;
-            background:rgba(16,185,129,.12);
-            border:1px solid rgba(16,185,129,.2);
-            color:var(--accent2);
-            border-radius:999px;
-            margin-bottom:1rem;
-            font-size:.8rem;
-            font-weight:700;
-        }
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
 
-        .progress-wrap{
-            margin-top:2rem;
-        }
+    gap:1.2rem;
 
-        .progress-bar{
-            height:10px;
-            background:#111827;
-            border-radius:999px;
-            overflow:hidden;
-        }
+    margin-bottom:2.5rem;
+}
 
-        .progress{
-            width:0%;
-            height:100%;
-            background:linear-gradient(90deg,var(--accent),var(--accent2));
-            transition:.4s;
-        }
+.feature{
+    background:rgba(255,255,255,.03);
 
-        .progress-text{
-            margin-top:.7rem;
-            font-size:.9rem;
-            color:var(--muted);
-        }
+    border:1px solid rgba(255,255,255,.05);
 
-        @media(max-width:768px){
-            h1{
-                font-size:3rem;
-            }
+    border-radius:20px;
 
-            .glass-card{
-                padding:2rem;
-            }
-        }
-    </style>
+    padding:1.5rem;
+
+    transition:.35s;
+}
+
+.feature:hover{
+    transform:translateY(-6px);
+
+    border-color:rgba(16,185,129,.3);
+
+    box-shadow:0 10px 30px rgba(16,185,129,.12);
+}
+
+.feature strong{
+    display:block;
+    margin-bottom:.7rem;
+    color:white;
+}
+
+.feature small{
+    color:var(--muted);
+    line-height:1.6;
+}
+
+/* =========================
+   CHECKLIST
+========================= */
+
+.checklist{
+    margin-top:2rem;
+}
+
+.check-item{
+    display:flex;
+    align-items:center;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid transparent;
+
+    border-radius:14px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.check-item:hover{
+    transform:translateX(5px);
+
+    border-color:rgba(16,185,129,.25);
+}
+
+.master-check{
+    background:rgba(16,185,129,.08);
+    border:1px solid rgba(16,185,129,.25);
+}
+
+input[type="checkbox"]{
+    width:22px;
+    height:22px;
+
+    margin-right:15px;
+
+    accent-color:var(--accent);
+
+    cursor:pointer;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-wrap{
+    margin-top:2rem;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+
+    background:#111827;
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+.progress{
+    width:0%;
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--accent),
+            var(--accent2)
+        );
+
+    transition:.35s;
+}
+
+.progress-text{
+    margin-top:.7rem;
+    color:var(--muted);
+    font-size:.9rem;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn{
+    width:100%;
+
+    border:none;
+
+    padding:1rem 2rem;
+
+    border-radius:999px;
+
+    font-weight:800;
+
+    margin-top:2rem;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    font-size:1rem;
+}
+
+.btn-locked{
+    background:#334155;
+    color:#94a3b8;
+    cursor:not-allowed;
+}
+
+.btn-active{
+    background:
+        linear-gradient(
+            135deg,
+            var(--accent),
+            var(--accent2)
+        );
+
+    color:#02120c;
+
+    box-shadow:
+        0 0 35px rgba(16,185,129,.35);
+}
+
+.btn-active:hover{
+    transform:translateY(-3px) scale(1.02);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    margin-top:2rem;
+
+    text-align:center;
+
+    font-size:.75rem;
+
+    letter-spacing:4px;
+
+    color:rgba(255,255,255,.3);
+}
+
+@media(max-width:768px){
+
+    h1{
+        font-size:2.8rem;
+    }
+
+    .card{
+        padding:2rem;
+    }
+}
+
+</style>
 </head>
 
 <body>
 
-    <!-- HERO PAGE -->
-    <section id="heroView" class="page-view active">
+<!-- =========================
+     FLOATING STARS
+========================= -->
 
-        <div class="hero-card">
+<div class="stars">
 
-            <div class="status-badge pulse">
-                ● V4 READY FOR DEPLOYMENT
+    <div class="star small" style="left:5%; animation-duration:10s;"></div>
+    <div class="star medium" style="left:12%; animation-duration:15s;"></div>
+    <div class="star big" style="left:20%; animation-duration:18s;"></div>
+    <div class="star small" style="left:28%; animation-duration:11s;"></div>
+    <div class="star medium" style="left:35%; animation-duration:20s;"></div>
+    <div class="star big" style="left:42%; animation-duration:16s;"></div>
+    <div class="star small" style="left:50%; animation-duration:13s;"></div>
+    <div class="star medium" style="left:58%; animation-duration:17s;"></div>
+    <div class="star big" style="left:66%; animation-duration:19s;"></div>
+    <div class="star small" style="left:74%; animation-duration:12s;"></div>
+    <div class="star medium" style="left:82%; animation-duration:21s;"></div>
+    <div class="star big" style="left:90%; animation-duration:15s;"></div>
+
+</div>
+
+<!-- =========================
+     MAIN PAGE
+========================= -->
+
+<section class="page">
+
+    <div class="card">
+
+        <div class="badge">
+            ● FOLDOCX V4 READY
+        </div>
+
+        <h1>FolDocX V4</h1>
+
+        <p class="tagline">
+            Intelligent Local AI Documentation Engine for Modern Developers.
+            Fast. Private. Fully Offline.
+        </p>
+
+        <!-- FEATURES -->
+
+        <div class="grid">
+
+            <div class="feature">
+                <strong>🔒 100% Private</strong>
+                <small>
+                    Runs completely on your local system.
+                </small>
             </div>
 
-            <h1>FolDocX V4</h1>
-
-            <p class="tagline">
-                Local AI Documentation Engine for Modern Developers
-            </p>
-
-            <div class="feature-grid">
-
-                <div class="f-item">
-                    <strong>🔒 100% Private</strong><br><br>
-                    <small>Runs entirely on your local hardware.</small>
-                </div>
-
-                <div class="f-item">
-                    <strong>⚡ Multi-Threaded</strong><br><br>
-                    <small>Fast analysis with Python & Flet.</small>
-                </div>
-
-                <div class="f-item">
-                    <strong>🤖 AI Orchestration</strong><br><br>
-                    <small>Powered by Ollama & Qwen 2.5.</small>
-                </div>
-
-                <div class="f-item">
-                    <strong>📊 Visual Dashboards</strong><br><br>
-                    <small>Clean HTML/JS project summaries.</small>
-                </div>
-
+            <div class="feature">
+                <strong>⚡ Multi Threaded</strong>
+                <small>
+                    Optimized parsing engine with blazing speed.
+                </small>
             </div>
 
-            <button class="btn btn-primary" onclick="showView('ollamaView')">
-                🚀 START INSTALLATION
-            </button>
+            <div class="feature">
+                <strong>🤖 AI Powered</strong>
+                <small>
+                    Ollama + Qwen2.5 local orchestration.
+                </small>
+            </div>
 
-            <div class="small-note">
-                TEAM ASPIRE4WIN
+            <div class="feature">
+                <strong>📊 Smart Reports</strong>
+                <small>
+                    Clean dashboards and project summaries.
+                </small>
             </div>
 
         </div>
 
-    </section>
+        <!-- CHECKLIST -->
 
-    <!-- OLLAMA PAGE -->
-    <section id="ollamaView" class="page-view">
+        <div class="checklist">
 
-        <div class="glass-card">
+            <!-- MASTER CHECKBOX -->
 
-            <div class="status-badge">
-                REQUIRED DEPENDENCY
+            <label class="check-item master-check">
+                <input type="checkbox" id="checkAll">
+                <strong>✅ Check All Requirements</strong>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                Windows 10 / 11 (64-bit)
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                8GB+ RAM Available
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                Ollama Installed & Running
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                qwen2.5-coder Model Pulled
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                2GB Free Disk Space
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" class="cb">
+                Ready for FolDocX V4 Installation
+            </label>
+
+        </div>
+
+        <!-- PROGRESS -->
+
+        <div class="progress-wrap">
+
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
             </div>
 
-            <h2>Install Ollama & Pull Qwen Model</h2>
-
-            <p>
-                FolDocX V4 depends on Ollama to run local AI models securely on your system.
-                Install Ollama first, then pull the required Qwen model before continuing.
-            </p>
-
-            <div class="terminal">
-
-                <div class="terminal-dots">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-
-                <div class="terminal-content">
-                    > ollama pull qwen2.5-coder <br>
-                    > model download initiated... <br>
-                    > preparing local inference engine...
-                </div>
-
-            </div>
-
-            <div class="nav-buttons">
-
-                <a
-                    class="btn btn-primary"
-                    href="https://ollama.com/download/windows"
-                    target="_blank"
-                >
-                    ⬇ DOWNLOAD OLLAMA
-                </a>
-
-                <button class="btn btn-secondary" onclick="copyCommand()">
-                    📋 COPY MODEL COMMAND
-                </button>
-
-            </div>
-
-            <div class="progress-wrap">
-
-                <div class="progress-bar">
-                    <div class="progress" id="setupProgress"></div>
-                </div>
-
-                <div class="progress-text">
-                    Setup Stage: Ollama Environment
-                </div>
-
-            </div>
-
-            <div class="nav-buttons">
-
-                <button class="btn btn-secondary" onclick="showView('heroView')">
-                    ← BACK
-                </button>
-
-                <button class="btn btn-primary" onclick="showView('checkView')">
-                    CONTINUE →
-                </button>
-
+            <div class="progress-text" id="progressText">
+                0 / 6 Requirements Completed
             </div>
 
         </div>
 
-    </section>
+        <!-- DOWNLOAD BUTTON -->
 
-    <!-- CHECKLIST PAGE -->
-    <section id="checkView" class="page-view">
+        <button
+            id="downloadBtn"
+            class="btn btn-locked"
+            disabled
+        >
+            🔒 LOCKED
+        </button>
 
-        <div class="glass-card">
-
-            <div class="status-badge pulse">
-                FINAL SYSTEM VALIDATION
-            </div>
-
-            <h2>Pre-Install Checklist</h2>
-
-            <p>
-                Ensure your system meets these requirements before downloading
-                the FolDocX V4 installer.
-            </p>
-
-            <div class="checklist">
-
-                <!-- SELECT ALL -->
-                <label class="check-item" style="
-                    border:1px solid rgba(16,185,129,.35);
-                    background:rgba(16,185,129,.08);
-                ">
-                    <input type="checkbox" id="selectAll">
-                    <strong>✅ Select All Requirements</strong>
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    Windows 10/11 (64-bit)
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    8GB+ RAM Available
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    Ollama Installed & Running
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    'qwen2.5-coder' Model Pulled
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    2GB Free Disk Space
-                </label>
-
-                <label class="check-item">
-                    <input type="checkbox" class="cb">
-                    I am ready for FolDocX V4
-                </label>
-
-            </div>
-
-            <div class="progress-wrap">
-
-                <div class="progress-bar">
-                    <div class="progress" id="checkProgress"></div>
-                </div>
-
-                <div class="progress-text" id="progressText">
-                    0 / 6 Requirements Completed
-                </div>
-
-            </div>
-
-            <div style="margin-top:2rem;">
-                <button
-                    id="dlBtn"
-                    class="btn btn-disabled"
-                    onclick="startDownload()"
-                    disabled
-                >
-                    🔒 LOCKED
-                </button>
-            </div>
-
-            <div class="nav-buttons">
-
-                <button class="btn btn-secondary" onclick="showView('ollamaView')">
-                    ← BACK
-                </button>
-
-            </div>
-
+        <div class="footer">
+            TEAM ASPIRE4WIN
         </div>
 
-    </section>
+    </div>
 
-    <script>
+</section>
 
-        function showView(viewId){
+<script>
 
-            const views = document.querySelectorAll('.page-view');
+/* =========================
+   CHECKBOX LOGIC
+========================= */
 
-            views.forEach(v => {
-                v.classList.remove('active');
-            });
+const checkboxes =
+    document.querySelectorAll('.cb');
 
-            document.getElementById(viewId).classList.add('active');
+const checkAll =
+    document.getElementById('checkAll');
 
-            window.scrollTo({
-                top:0,
-                behavior:'smooth'
-            });
+const progress =
+    document.getElementById('progress');
 
-            if(viewId === 'ollamaView'){
-                document.getElementById('setupProgress').style.width = '45%';
-            }
+const progressText =
+    document.getElementById('progressText');
 
-            if(viewId === 'checkView'){
-                document.getElementById('setupProgress').style.width = '100%';
-            }
-        }
+const downloadBtn =
+    document.getElementById('downloadBtn');
 
-        function copyCommand(){
+/* =========================
+   MASTER CHECKBOX
+========================= */
 
-            navigator.clipboard.writeText(
-                "ollama pull qwen2.5-coder"
-            );
+checkAll.addEventListener('change', () => {
 
-            alert("Command copied:\n\nollama pull qwen2.5-coder");
-        }
+    checkboxes.forEach(box => {
+        box.checked = checkAll.checked;
+    });
 
-        const checkboxes = document.querySelectorAll('.cb');
-        const selectAll = document.getElementById('selectAll');
-        const dlBtn = document.getElementById('dlBtn');
-        const progress = document.getElementById('checkProgress');
-        const progressText = document.getElementById('progressText');
+    updateProgress();
 
-        function updateChecklist(){
+});
 
-            const checked =
-                Array.from(checkboxes)
-                .filter(c => c.checked).length;
+/* =========================
+   INDIVIDUAL CHECKBOXES
+========================= */
 
-            const percent =
-                (checked / checkboxes.length) * 100;
+checkboxes.forEach(box => {
 
-            progress.style.width = percent + "%";
+    box.addEventListener('change', () => {
 
-            progressText.innerHTML =
-                `${checked} / ${checkboxes.length} Requirements Completed`;
+        const allChecked =
+            Array.from(checkboxes)
+            .every(c => c.checked);
 
-            const allChecked =
-                Array.from(checkboxes)
-                .every(c => c.checked);
+        checkAll.checked = allChecked;
 
-            selectAll.checked = allChecked;
+        updateProgress();
 
-            if(allChecked){
+    });
 
-                dlBtn.disabled = false;
-                dlBtn.className = "btn btn-active";
-                dlBtn.innerHTML = "🚀 DOWNLOAD V4 INSTALLER";
+});
 
-                dlBtn.style.boxShadow =
-                    "0 0 35px rgba(16,185,129,.4)";
+/* =========================
+   UPDATE UI
+========================= */
 
-            }else{
+function updateProgress(){
 
-                dlBtn.disabled = true;
-                dlBtn.className = "btn btn-disabled";
-                dlBtn.innerHTML = "🔒 LOCKED";
-                dlBtn.style.boxShadow = "none";
-            }
-        }
+    const checked =
+        Array.from(checkboxes)
+        .filter(c => c.checked).length;
 
-        selectAll.addEventListener('change', () => {
+    const percent =
+        (checked / checkboxes.length) * 100;
 
-            checkboxes.forEach(box => {
-                box.checked = selectAll.checked;
-            });
+    progress.style.width = percent + "%";
 
-            updateChecklist();
-        });
+    progressText.innerHTML =
+        `${checked} / ${checkboxes.length} Requirements Completed`;
 
-        checkboxes.forEach(box => {
+    if(checked === checkboxes.length){
 
-            box.addEventListener('change', () => {
-                updateChecklist();
-            });
+        downloadBtn.disabled = false;
 
-        });
+        downloadBtn.classList.remove('btn-locked');
 
-        function startDownload(){
+        downloadBtn.classList.add('btn-active');
 
-            dlBtn.innerHTML = "⏳ PREPARING DOWNLOAD...";
+        downloadBtn.innerHTML =
+            "🚀 DOWNLOAD FOLDOCX V4";
 
-            setTimeout(() => {
+    }else{
 
-                window.location.href =
-                "https://github.com/Yuvraj-YP/FolDocX-V4/releases/download/v0.04/FolDocX_V4.exe";
+        downloadBtn.disabled = true;
 
-            },1200);
-        }
+        downloadBtn.classList.remove('btn-active');
 
-    </script>
+        downloadBtn.classList.add('btn-locked');
+
+        downloadBtn.innerHTML =
+            "🔒 LOCKED";
+    }
+}
+
+/* =========================
+   DOWNLOAD ACTION
+========================= */
+
+downloadBtn.addEventListener('click', () => {
+
+    if(downloadBtn.disabled) return;
+
+    downloadBtn.innerHTML =
+        "⏳ PREPARING DOWNLOAD...";
+
+    setTimeout(() => {
+
+        window.location.href =
+        "https://github.com/Yuvraj-YP/FolDocX-V4/releases/download/v0.04/FolDocX_V4.exe";
+
+    },1200);
+
+});
+
+</script>
 
 </body>
 </html>
