@@ -37,7 +37,6 @@
             overflow-x:hidden;
         }
 
-        /* Animated background */
         body::before{
             content:"";
             position:fixed;
@@ -86,7 +85,6 @@
             }
         }
 
-        /* HERO */
         #heroView{
             background:
                 radial-gradient(circle at center,#064e3b 0%,var(--bg) 70%);
@@ -151,7 +149,6 @@
             transform:scale(1.3);
         }
 
-        /* Cards */
         .glass-card{
             width:100%;
             max-width:700px;
@@ -188,7 +185,6 @@
             line-height:1.7;
         }
 
-        /* Buttons */
         .btn{
             padding:1rem 2.6rem;
             border:none;
@@ -239,7 +235,6 @@
             cursor:pointer;
         }
 
-        /* Checklist */
         .checklist{
             margin:2rem 0;
         }
@@ -268,7 +263,6 @@
             accent-color:var(--accent);
         }
 
-        /* Terminal */
         .terminal{
             margin-top:1.5rem;
             background:#020617;
@@ -535,6 +529,15 @@
 
             <div class="checklist">
 
+                <!-- SELECT ALL -->
+                <label class="check-item" style="
+                    border:1px solid rgba(16,185,129,.35);
+                    background:rgba(16,185,129,.08);
+                ">
+                    <input type="checkbox" id="selectAll">
+                    <strong>✅ Select All Requirements</strong>
+                </label>
+
                 <label class="check-item">
                     <input type="checkbox" class="cb">
                     Windows 10/11 (64-bit)
@@ -604,7 +607,6 @@
 
     <script>
 
-        /* Page Navigation */
         function showView(viewId){
 
             const views = document.querySelectorAll('.page-view');
@@ -620,7 +622,6 @@
                 behavior:'smooth'
             });
 
-            /* Progress animation */
             if(viewId === 'ollamaView'){
                 document.getElementById('setupProgress').style.width = '45%';
             }
@@ -630,7 +631,6 @@
             }
         }
 
-        /* Copy Ollama Command */
         function copyCommand(){
 
             navigator.clipboard.writeText(
@@ -640,54 +640,67 @@
             alert("Command copied:\n\nollama pull qwen2.5-coder");
         }
 
-        /* Checklist Logic */
         const checkboxes = document.querySelectorAll('.cb');
+        const selectAll = document.getElementById('selectAll');
         const dlBtn = document.getElementById('dlBtn');
         const progress = document.getElementById('checkProgress');
         const progressText = document.getElementById('progressText');
 
+        function updateChecklist(){
+
+            const checked =
+                Array.from(checkboxes)
+                .filter(c => c.checked).length;
+
+            const percent =
+                (checked / checkboxes.length) * 100;
+
+            progress.style.width = percent + "%";
+
+            progressText.innerHTML =
+                `${checked} / ${checkboxes.length} Requirements Completed`;
+
+            const allChecked =
+                Array.from(checkboxes)
+                .every(c => c.checked);
+
+            selectAll.checked = allChecked;
+
+            if(allChecked){
+
+                dlBtn.disabled = false;
+                dlBtn.className = "btn btn-active";
+                dlBtn.innerHTML = "🚀 DOWNLOAD V4 INSTALLER";
+
+                dlBtn.style.boxShadow =
+                    "0 0 35px rgba(16,185,129,.4)";
+
+            }else{
+
+                dlBtn.disabled = true;
+                dlBtn.className = "btn btn-disabled";
+                dlBtn.innerHTML = "🔒 LOCKED";
+                dlBtn.style.boxShadow = "none";
+            }
+        }
+
+        selectAll.addEventListener('change', () => {
+
+            checkboxes.forEach(box => {
+                box.checked = selectAll.checked;
+            });
+
+            updateChecklist();
+        });
+
         checkboxes.forEach(box => {
 
             box.addEventListener('change', () => {
-
-                const checked =
-                    Array.from(checkboxes)
-                    .filter(c => c.checked).length;
-
-                const percent =
-                    (checked / checkboxes.length) * 100;
-
-                progress.style.width = percent + "%";
-
-                progressText.innerHTML =
-                    `${checked} / ${checkboxes.length} Requirements Completed`;
-
-                const allChecked =
-                    Array.from(checkboxes)
-                    .every(c => c.checked);
-
-                if(allChecked){
-
-                    dlBtn.disabled = false;
-                    dlBtn.className = "btn btn-active";
-                    dlBtn.innerHTML = "🚀 DOWNLOAD V4 INSTALLER";
-
-                    dlBtn.style.boxShadow =
-                        "0 0 35px rgba(16,185,129,.4)";
-
-                }else{
-
-                    dlBtn.disabled = true;
-                    dlBtn.className = "btn btn-disabled";
-                    dlBtn.innerHTML = "🔒 LOCKED";
-                    dlBtn.style.boxShadow = "none";
-                }
-
+                updateChecklist();
             });
 
         });
 
-        /* Download */
         function startDownload(){
 
             dlBtn.innerHTML = "⏳ PREPARING DOWNLOAD...";
