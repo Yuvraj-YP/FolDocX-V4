@@ -30,13 +30,16 @@ html{
 
 body{
     font-family:'Segoe UI',sans-serif;
+
     background:
         radial-gradient(circle at top left,#064e3b22 0%,transparent 30%),
         radial-gradient(circle at bottom right,#10b98111 0%,transparent 35%),
         var(--bg);
 
     color:var(--text);
+
     overflow-x:hidden;
+
     min-height:100vh;
 }
 
@@ -47,22 +50,31 @@ body{
 .stars{
     position:fixed;
     inset:0;
+
     overflow:hidden;
-    z-index:-2;
+
+    z-index:-5;
+
     pointer-events:none;
 }
 
 .star{
     position:absolute;
-    bottom:-100px;
-    border-radius:50%;
+
+    bottom:-120px;
+
     background:white;
-    opacity:.8;
-    animation:floatStar linear infinite;
+
+    border-radius:50%;
+
     box-shadow:
-        0 0 10px rgba(255,255,255,.8),
-        0 0 20px rgba(16,185,129,.6);
+        0 0 6px rgba(255,255,255,.8),
+        0 0 14px rgba(16,185,129,.45);
+
+    animation:floatStar linear infinite;
 }
+
+/* Sizes */
 
 .star.small{
     width:2px;
@@ -79,10 +91,15 @@ body{
     height:6px;
 }
 
+/* Floating Animation */
+
 @keyframes floatStar{
 
     0%{
-        transform:translateY(0px) translateX(0px);
+        transform:
+            translateY(0)
+            translateX(0);
+
         opacity:0;
     }
 
@@ -90,29 +107,42 @@ body{
         opacity:1;
     }
 
+    50%{
+        opacity:.9;
+    }
+
     100%{
-        transform:translateY(-120vh) translateX(120px);
+        transform:
+            translateY(-120vh)
+            translateX(120px);
+
         opacity:0;
     }
 }
 
 /* =========================
-   MAIN VIEW
+   MAIN PAGE
 ========================= */
 
 .page{
     min-height:100vh;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     padding:2rem;
 }
 
 .card{
     width:100%;
+
     max-width:760px;
 
     background:var(--card);
+
     backdrop-filter:blur(18px);
 
     border:1px solid var(--border);
@@ -155,6 +185,7 @@ body{
     color:var(--accent2);
 
     font-size:.8rem;
+
     font-weight:700;
 
     margin-bottom:1.5rem;
@@ -162,7 +193,9 @@ body{
 
 h1{
     font-size:4rem;
+
     color:var(--accent);
+
     letter-spacing:-3px;
 
     margin-bottom:.5rem;
@@ -172,8 +205,11 @@ h1{
 
 .tagline{
     color:var(--muted);
+
     font-size:1.2rem;
+
     margin-bottom:2.5rem;
+
     line-height:1.7;
 }
 
@@ -214,12 +250,15 @@ h1{
 
 .feature strong{
     display:block;
+
     margin-bottom:.7rem;
+
     color:white;
 }
 
 .feature small{
     color:var(--muted);
+
     line-height:1.6;
 }
 
@@ -233,6 +272,7 @@ h1{
 
 .check-item{
     display:flex;
+
     align-items:center;
 
     background:rgba(255,255,255,.03);
@@ -258,11 +298,13 @@ h1{
 
 .master-check{
     background:rgba(16,185,129,.08);
+
     border:1px solid rgba(16,185,129,.25);
 }
 
 input[type="checkbox"]{
     width:22px;
+
     height:22px;
 
     margin-right:15px;
@@ -282,6 +324,7 @@ input[type="checkbox"]{
 
 .progress-bar{
     width:100%;
+
     height:10px;
 
     background:#111827;
@@ -293,6 +336,7 @@ input[type="checkbox"]{
 
 .progress{
     width:0%;
+
     height:100%;
 
     background:
@@ -307,7 +351,9 @@ input[type="checkbox"]{
 
 .progress-text{
     margin-top:.7rem;
+
     color:var(--muted);
+
     font-size:.9rem;
 }
 
@@ -337,7 +383,9 @@ input[type="checkbox"]{
 
 .btn-locked{
     background:#334155;
+
     color:#94a3b8;
+
     cursor:not-allowed;
 }
 
@@ -395,22 +443,7 @@ input[type="checkbox"]{
      FLOATING STARS
 ========================= -->
 
-<div class="stars">
-
-    <div class="star small" style="left:5%; animation-duration:10s;"></div>
-    <div class="star medium" style="left:12%; animation-duration:15s;"></div>
-    <div class="star big" style="left:20%; animation-duration:18s;"></div>
-    <div class="star small" style="left:28%; animation-duration:11s;"></div>
-    <div class="star medium" style="left:35%; animation-duration:20s;"></div>
-    <div class="star big" style="left:42%; animation-duration:16s;"></div>
-    <div class="star small" style="left:50%; animation-duration:13s;"></div>
-    <div class="star medium" style="left:58%; animation-duration:17s;"></div>
-    <div class="star big" style="left:66%; animation-duration:19s;"></div>
-    <div class="star small" style="left:74%; animation-duration:12s;"></div>
-    <div class="star medium" style="left:82%; animation-duration:21s;"></div>
-    <div class="star big" style="left:90%; animation-duration:15s;"></div>
-
-</div>
+<div class="stars"></div>
 
 <!-- =========================
      MAIN PAGE
@@ -437,6 +470,7 @@ input[type="checkbox"]{
 
             <div class="feature">
                 <strong>🔒 100% Private</strong>
+
                 <small>
                     Runs completely on your local system.
                 </small>
@@ -444,6 +478,7 @@ input[type="checkbox"]{
 
             <div class="feature">
                 <strong>⚡ Multi Threaded</strong>
+
                 <small>
                     Optimized parsing engine with blazing speed.
                 </small>
@@ -451,6 +486,7 @@ input[type="checkbox"]{
 
             <div class="feature">
                 <strong>🤖 AI Powered</strong>
+
                 <small>
                     Ollama + Qwen2.5 local orchestration.
                 </small>
@@ -458,6 +494,7 @@ input[type="checkbox"]{
 
             <div class="feature">
                 <strong>📊 Smart Reports</strong>
+
                 <small>
                     Clean dashboards and project summaries.
                 </small>
@@ -469,41 +506,60 @@ input[type="checkbox"]{
 
         <div class="checklist">
 
-            <!-- MASTER CHECKBOX -->
-
             <label class="check-item master-check">
+
                 <input type="checkbox" id="checkAll">
+
                 <strong>✅ Check All Requirements</strong>
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 Windows 10 / 11 (64-bit)
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 8GB+ RAM Available
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 Ollama Installed & Running
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 qwen2.5-coder Model Pulled
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 2GB Free Disk Space
+
             </label>
 
             <label class="check-item">
+
                 <input type="checkbox" class="cb">
+
                 Ready for FolDocX V4 Installation
+
             </label>
 
         </div>
@@ -513,7 +569,9 @@ input[type="checkbox"]{
         <div class="progress-wrap">
 
             <div class="progress-bar">
+
                 <div class="progress" id="progress"></div>
+
             </div>
 
             <div class="progress-text" id="progressText">
@@ -541,6 +599,41 @@ input[type="checkbox"]{
 </section>
 
 <script>
+
+/* =========================
+   GENERATE FLOATING STARS
+========================= */
+
+const starsContainer =
+    document.querySelector('.stars');
+
+for(let i = 0; i < 120; i++){
+
+    const star =
+        document.createElement('div');
+
+    const sizes =
+        ['small','medium','big'];
+
+    const randomSize =
+        sizes[Math.floor(Math.random() * sizes.length)];
+
+    star.classList.add('star', randomSize);
+
+    star.style.left =
+        Math.random() * 100 + "vw";
+
+    star.style.animationDuration =
+        (8 + Math.random() * 15) + "s";
+
+    star.style.animationDelay =
+        Math.random() * 10 + "s";
+
+    star.style.opacity =
+        0.3 + Math.random();
+
+    starsContainer.appendChild(star);
+}
 
 /* =========================
    CHECKBOX LOGIC
@@ -572,7 +665,6 @@ checkAll.addEventListener('change', () => {
     });
 
     updateProgress();
-
 });
 
 /* =========================
